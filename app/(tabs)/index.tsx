@@ -1,7 +1,7 @@
-import { Image } from 'expo-image';
-import { StyleSheet, TouchableOpacity, View, ScrollView, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { Link } from 'expo-router';
+import { Dimensions, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
@@ -61,7 +61,7 @@ export default function HomeScreen() {
           </View>
           <TouchableOpacity style={styles.refreshButton}>
             <Ionicons name="refresh" size={18} color="#0a7ea4" />
-            <ThemedText style={styles.refreshText}>Actualizar datos</ThemedText>
+            <ThemedText style={styles.refreshText}>Actualizar</ThemedText>
           </TouchableOpacity>
         </View>
       </ThemedView>
@@ -93,17 +93,24 @@ export default function HomeScreen() {
       </View>
 
       {/* 3. Sección Destacada: Suscripciones */}
-      <ThemedView style={[styles.subscriptionContainer, { backgroundColor: sectionBg }]}>
-        <ThemedText type="subtitle">Tus suscripciones de este mes</ThemedText>
-        <View style={styles.subscriptionMetrics}>
-          <ThemedText style={styles.subscriptionTotal}>Total: <ThemedText type="defaultSemiBold">${totalSubscriptions.toLocaleString('es-CO')}</ThemedText></ThemedText>
-          <ThemedText style={styles.subscriptionLimit}>Límite: $150.000</ThemedText>
-        </View>
-        <View style={styles.progressBarContainer}>
-          <View style={[styles.progressBar, { width: `${progress * 100}%`, backgroundColor: progress > 0.8 ? '#FF453A' : '#32C759' }]} />
-        </View>
-        <ThemedText style={styles.subsCount}>{SUBSCRIPTIONS.length} suscripciones activas detectedas</ThemedText>
-      </ThemedView>
+      <Link href="/detector-suscripciones" asChild>
+        <TouchableOpacity>
+          <ThemedView style={[styles.subscriptionContainer, { backgroundColor: sectionBg }]}>
+            <View style={styles.sectionHeader}>
+              <ThemedText type="subtitle">Suscripciones detectadas</ThemedText>
+            </View>
+            <View style={styles.subscriptionMetrics}>
+              <ThemedText style={styles.subscriptionTotal}>Total: <ThemedText type="defaultSemiBold">${totalSubscriptions.toLocaleString('es-CO')}</ThemedText></ThemedText>
+              <ThemedText style={styles.subscriptionLimit}>Presupuesto: $150.000</ThemedText>
+            </View>
+            <View style={styles.progressBarContainer}>
+              <View style={[styles.progressBar, { width: `${progress * 100}%`, backgroundColor: progress > 0.8 ? '#FF453A' : '#32C759' }]} />
+            </View>
+            <ThemedText style={styles.subsCount}>{SUBSCRIPTIONS.length} suscripciones activas identificadas</ThemedText>
+              <ThemedText style={styles.viewAll}>Ver detalles</ThemedText>
+          </ThemedView>
+        </TouchableOpacity>
+      </Link>
 
       {/* 4. Abajo: Últimos 5 Movimientos */}
       <ThemedView style={styles.movementsSection}>
