@@ -67,6 +67,48 @@ export default function HomeScreen() {
       </ThemedView>
 
       <ThemedView style={styles.stepContainer}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+          <ThemedText type="subtitle">Movimientos Recientes</ThemedText>
+          <Link href="/transactions">
+            <ThemedText style={{ color: '#0a7ea4', fontWeight: 'bold', fontSize: 13 }}>Ver todos</ThemedText>
+          </Link>
+        </View>
+        <ThemedView style={styles.recentList}>
+          <ThemedView style={styles.recentItem}>
+            <View style={[styles.iconBox, { backgroundColor: 'rgba(255, 69, 58, 0.1)' }]}>
+              <Ionicons name="cafe-outline" size={18} color="#FF453A" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <ThemedText type="defaultSemiBold">Starbucks</ThemedText>
+              <ThemedText style={{ fontSize: 12, color: '#999' }}>Bancolombia • Hoy</ThemedText>
+            </View>
+            <ThemedText type="defaultSemiBold">-$12,500</ThemedText>
+          </ThemedView>
+          <View style={styles.miniDivider} />
+          <ThemedView style={styles.recentItem}>
+            <View style={[styles.iconBox, { backgroundColor: 'rgba(50, 199, 89, 0.1)' }]}>
+              <Ionicons name="arrow-down-circle-outline" size={18} color="#32C759" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <ThemedText type="defaultSemiBold">Nequi Recibido</ThemedText>
+              <ThemedText style={{ fontSize: 12, color: '#999' }}>Nequi • Hoy</ThemedText>
+            </View>
+            <ThemedText type="defaultSemiBold" style={{ color: '#32C759' }}>+$50,000</ThemedText>
+          </ThemedView>
+          <View style={styles.miniDivider} />
+          <ThemedView style={styles.recentItem}>
+            <View style={[styles.iconBox, { backgroundColor: 'rgba(255, 69, 58, 0.1)' }]}>
+              <Ionicons name="cart-outline" size={18} color="#FF453A" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <ThemedText type="defaultSemiBold">Almacenes Éxito</ThemedText>
+              <ThemedText style={{ fontSize: 12, color: '#999' }}>Nu • Hoy</ThemedText>
+            </View>
+            <ThemedText type="defaultSemiBold">-$85,000</ThemedText>
+          </ThemedView>
+        </ThemedView>
+      </ThemedView>
+      <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Vincular Nueva Entidad</ThemedText>
         <Link href="/vincula-entidad" asChild>
           <TouchableOpacity style={styles.button}>
@@ -130,5 +172,27 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: 'rgba(0,0,0,0.1)',
     marginVertical: 4,
+  },
+  recentList: {
+    borderRadius: 16,
+    padding: 12,
+    backgroundColor: 'rgba(0,0,0,0.02)',
+  },
+  recentItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    gap: 12,
+  },
+  iconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  miniDivider: {
+    height: 1,
+    backgroundColor: 'rgba(0,0,0,0.05)',
   },
 });
