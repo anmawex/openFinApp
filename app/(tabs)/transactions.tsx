@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, SectionList, View, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -34,6 +35,7 @@ const TRANSACTIONS = [
 
 export default function TransactionsScreen() {
   const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
   
   const textColor = useThemeColor({}, 'text');
   const cardBg = useThemeColor({ light: '#FFFFFF', dark: '#1E1E1E' }, 'background');
@@ -53,8 +55,18 @@ export default function TransactionsScreen() {
     return value < 0 ? `-$${formatted}` : `+$${formatted}`;
   };
 
+  const handleSelectBank = (item: typeof TRANSACTIONS[0]['data'][0]) => {
+    router.push({
+      pathname: '/detalle-comercio',
+      params: { name: item.description }
+    });
+  };
+
   const renderItem = ({ item }: { item: typeof TRANSACTIONS[0]['data'][0] }) => (
-    <TouchableOpacity style={[styles.transactionItem, { backgroundColor: cardBg }]}>
+    <TouchableOpacity 
+      style={[styles.transactionItem, { backgroundColor: cardBg }]}
+      onPress={() => handleSelectBank(item)}
+    >
       <View style={[styles.iconContainer, { backgroundColor: item.amount < 0 ? 'rgba(255, 69, 58, 0.1)' : 'rgba(52, 199, 89, 0.1)' }]}>
         <Ionicons name={item.icon as any} size={24} color={item.amount < 0 ? '#FF453A' : '#32C759'} />
       </View>
