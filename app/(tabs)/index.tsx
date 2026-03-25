@@ -1,9 +1,9 @@
+import React from 'react';
+import { StyleSheet, TouchableOpacity, View, ScrollView, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Image } from 'expo-image';
 import { Link } from 'expo-router';
-import { Dimensions, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useThemeColor } from '@/hooks/use-theme-color';
@@ -34,6 +34,7 @@ const SUBSCRIPTIONS = [
 ];
 
 export default function HomeScreen() {
+  const insets = useSafeAreaInsets();
   const cardBg = useThemeColor({ light: '#11181C', dark: '#FFFFFF' }, 'background');
   const cardText = useThemeColor({ light: '#FFFFFF', dark: '#11181C' }, 'text');
   const sectionBg = useThemeColor({ light: '#f9f9f9', dark: '#1e1e1e' }, 'background');
@@ -43,110 +44,137 @@ export default function HomeScreen() {
   const progress = Math.min(totalSubscriptions / subscriptionBudget, 1);
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      
-      {/* 1. Arriba: Card Saldo Total */}
-      <ThemedView style={styles.topContainer}>
-        <View style={[styles.totalCard, { backgroundColor: cardBg }]}>
+    <ThemedView style={styles.container}>
+      <ScrollView contentContainerStyle={{ paddingTop: insets.top + 20, paddingBottom: 40 }}>
+        
+        {/* Header Personalizado */}
+        <View style={styles.header}>
           <View>
-            <ThemedText style={[styles.totalLabel, { color: cardText }]}>Saldo Total Centralizado</ThemedText>
-            <ThemedText style={[styles.totalValue, { color: cardText }]}>$6.820.650</ThemedText>
+            <ThemedText style={styles.greeting}>Hola de nuevo,</ThemedText>
+            <ThemedText type="title">Tu Resumen</ThemedText>
           </View>
-          <TouchableOpacity style={styles.refreshButton}>
-            <Ionicons name="refresh" size={18} color="#0a7ea4" />
-            <ThemedText style={styles.refreshText}>Actualizar</ThemedText>
+          <TouchableOpacity style={styles.profileButton}>
+            <Ionicons name="person-circle-outline" size={32} color="#0a7ea4" />
           </TouchableOpacity>
         </View>
-      </ThemedView>
 
-      {/* 2. Medio: Carrusel de Saldos Individuales */}
-      <View style={styles.carouselContainer}>
-        <ThemedText type="subtitle" style={styles.sectionTitle}>Tus Bancos</ThemedText>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          snapToInterval={CARD_WIDTH + 16}
-          decelerationRate="fast"
-          contentContainerStyle={styles.carouselContent}
-        >
-          {INDIVIDUAL_BALANCES.map((item) => (
-            <View key={item.id} style={[styles.bankCard, { backgroundColor: item.color }]}>
-              <ThemedText style={[styles.bankName, { color: item.textColor }]}>{item.name}</ThemedText>
-              <ThemedText style={[styles.bankBalance, { color: item.textColor }]}>{item.balance}</ThemedText>
-              <Ionicons name="card-outline" size={32} color={item.textColor} style={styles.bankIcon} opacity={0.3} />
+        {/* 1. Card Saldo Total */}
+        <View style={styles.topContainer}>
+          <View style={[styles.totalCard, { backgroundColor: cardBg }]}>
+            <View>
+              <ThemedText style={[styles.totalLabel, { color: cardText }]}>Saldo Total Centralizado</ThemedText>
+              <ThemedText style={[styles.totalValue, { color: cardText }]}>$6.820.650</ThemedText>
             </View>
-          ))}
-          <Link href="/vincula-entidad" asChild>
-            <TouchableOpacity style={styles.addBankCard}>
-              <Ionicons name="add-outline" size={32} color="#999" />
-              <ThemedText style={{ color: '#999' }}>Añadir</ThemedText>
+            <TouchableOpacity style={styles.refreshButton}>
+              <Ionicons name="refresh" size={18} color="#0a7ea4" />
+              <ThemedText style={styles.refreshText}>Actualizar</ThemedText>
             </TouchableOpacity>
-          </Link>
-        </ScrollView>
-      </View>
-
-      {/* 3. Sección Destacada: Suscripciones */}
-      <Link href="/detector-suscripciones" asChild>
-        <TouchableOpacity>
-          <ThemedView style={[styles.subscriptionContainer, { backgroundColor: sectionBg }]}>
-            <View style={styles.sectionHeader}>
-              <ThemedText type="subtitle">Suscripciones detectadas</ThemedText>
-            </View>
-            <View style={styles.subscriptionMetrics}>
-              <ThemedText style={styles.subscriptionTotal}>Total: <ThemedText type="defaultSemiBold">${totalSubscriptions.toLocaleString('es-CO')}</ThemedText></ThemedText>
-              <ThemedText style={styles.subscriptionLimit}>Presupuesto: $150.000</ThemedText>
-            </View>
-            <View style={styles.progressBarContainer}>
-              <View style={[styles.progressBar, { width: `${progress * 100}%`, backgroundColor: progress > 0.8 ? '#FF453A' : '#32C759' }]} />
-            </View>
-            <ThemedText style={styles.subsCount}>{SUBSCRIPTIONS.length} suscripciones activas identificadas</ThemedText>
-              <ThemedText style={styles.viewAll}>Ver detalles</ThemedText>
-          </ThemedView>
-        </TouchableOpacity>
-      </Link>
-
-      {/* 4. Abajo: Últimos 5 Movimientos */}
-      <ThemedView style={styles.movementsSection}>
-        <View style={styles.sectionHeader}>
-          <ThemedText type="subtitle">Últimos movimientos</ThemedText>
-          <Link href="/transactions">
-            <ThemedText style={styles.viewAll}>Ver todos</ThemedText>
-          </Link>
+          </View>
         </View>
-        <ThemedView style={styles.movementsList}>
-          {RECENT_MOVEMENTS.map((item, index) => (
-            <View key={item.id}>
-              <View style={styles.movementItem}>
-                <View style={[styles.iconBox, { backgroundColor: item.color + '11' }]}>
-                  <Ionicons name={item.icon as any} size={20} color={item.color} />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <ThemedText type="defaultSemiBold">{item.title}</ThemedText>
-                  <ThemedText style={styles.movementSubtitle}>{item.subtitle}</ThemedText>
-                </View>
-                <ThemedText type="defaultSemiBold" style={{ color: item.amount.startsWith('+') ? '#32C759' : undefined }}>{item.amount}</ThemedText>
-              </View>
-              {index < RECENT_MOVEMENTS.length - 1 && <View style={styles.divider} />}
-            </View>
-          ))}
-        </ThemedView>
-      </ThemedView>
 
-    </ParallaxScrollView>
+        {/* 2. Carrusel de Saldos Individuales */}
+        <View style={styles.carouselContainer}>
+          <ThemedText type="subtitle" style={styles.sectionTitle}>Tus Bancos Conectados</ThemedText>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            snapToInterval={CARD_WIDTH + 16}
+            decelerationRate="fast"
+            contentContainerStyle={styles.carouselContent}
+          >
+            {INDIVIDUAL_BALANCES.map((item) => (
+              <View key={item.id} style={[styles.bankCard, { backgroundColor: item.color }]}>
+                <ThemedText style={[styles.bankName, { color: item.textColor }]}>{item.name}</ThemedText>
+                <ThemedText style={[styles.bankBalance, { color: item.textColor }]}>{item.balance}</ThemedText>
+                <Ionicons name="card-outline" size={32} color={item.textColor} style={styles.bankIcon} opacity={0.3} />
+              </View>
+            ))}
+            <Link href="/vincula-entidad" asChild>
+              <TouchableOpacity style={styles.addBankCard}>
+                <Ionicons name="add-outline" size={32} color="#999" />
+                <ThemedText style={{ color: '#999' }}>Añadir</ThemedText>
+              </TouchableOpacity>
+            </Link>
+          </ScrollView>
+        </View>
+
+        {/* 3. Suscripciones */}
+        <Link href="/detector-suscripciones" asChild>
+          <TouchableOpacity activeOpacity={0.8}>
+            <ThemedView style={[styles.subscriptionContainer, { backgroundColor: sectionBg }]}>
+              <View style={styles.sectionHeader}>
+                <ThemedText type="subtitle">Suscripciones del mes</ThemedText>
+                <ThemedText style={styles.viewAll}>Ver detalles</ThemedText>
+              </View>
+              <View style={styles.subscriptionMetrics}>
+                <ThemedText style={styles.subscriptionTotal}>Total: <ThemedText type="defaultSemiBold">${totalSubscriptions.toLocaleString('es-CO')}</ThemedText></ThemedText>
+                <ThemedText style={styles.subscriptionLimit}>Presupuesto: $150.000</ThemedText>
+              </View>
+              <View style={styles.progressBarContainer}>
+                <View style={[styles.progressBar, { width: `${progress * 100}%`, backgroundColor: progress > 0.8 ? '#FF453A' : '#32C759' }]} />
+              </View>
+              <ThemedText style={styles.subsCount}>{SUBSCRIPTIONS.length} suscripciones activas identificadas</ThemedText>
+            </ThemedView>
+          </TouchableOpacity>
+        </Link>
+
+        {/* 4. Últimos Movimientos */}
+        <View style={styles.movementsSection}>
+          <View style={styles.sectionHeader}>
+            <ThemedText type="subtitle">Movimientos recientes</ThemedText>
+            <Link href="/transactions">
+              <ThemedText style={styles.viewAll}>Ver todo</ThemedText>
+            </Link>
+          </View>
+          <ThemedView style={styles.movementsList}>
+            {RECENT_MOVEMENTS.map((item, index) => (
+              <View key={item.id}>
+                <View style={styles.movementItem}>
+                  <View style={[styles.iconBox, { backgroundColor: item.color + '11' }]}>
+                    <Ionicons name={item.icon as any} size={20} color={item.color} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <ThemedText type="defaultSemiBold">{item.title}</ThemedText>
+                    <ThemedText style={styles.movementSubtitle}>{item.subtitle}</ThemedText>
+                  </View>
+                  <ThemedText type="defaultSemiBold" style={{ color: item.amount.startsWith('+') ? '#32C759' : undefined }}>{item.amount}</ThemedText>
+                </View>
+                {index < RECENT_MOVEMENTS.length - 1 && <View style={styles.divider} />}
+              </View>
+            ))}
+          </ThemedView>
+        </View>
+
+      </ScrollView>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  greeting: {
+    fontSize: 16,
+    color: '#999',
+  },
+  profileButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(0,0,0,0.02)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   topContainer: {
     paddingHorizontal: 16,
-    marginTop: 16,
   },
   totalCard: {
     padding: 24,
@@ -264,7 +292,6 @@ const styles = StyleSheet.create({
   },
   movementsSection: {
     paddingHorizontal: 16,
-    paddingBottom: 40,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -303,12 +330,5 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: 'rgba(0,0,0,0.03)',
     marginHorizontal: 12,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
   },
 });
