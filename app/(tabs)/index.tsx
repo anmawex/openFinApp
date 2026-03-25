@@ -1,13 +1,17 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { Link } from 'expo-router';
 
 export default function HomeScreen() {
+  const dashboardBg = useThemeColor({ light: 'rgba(0,0,0,0.03)', dark: 'rgba(255,255,255,0.05)' }, 'background');
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -37,41 +41,41 @@ export default function HomeScreen() {
         </ThemedText>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
-
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
+        <ThemedText type="subtitle">Tus Balances Centralizados</ThemedText>
+        <ThemedView style={[styles.dashboardCard, { backgroundColor: dashboardBg }]}>
+          <ThemedView style={styles.dashboardItem}>
+            <View style={[styles.iconDot, { backgroundColor: '#FDDA24' }]} />
+            <ThemedText style={{ flex: 1 }}>Bancolombia</ThemedText>
+            <ThemedText type="defaultSemiBold">$3,450,200</ThemedText>
+          </ThemedView>
+          <ThemedView style={styles.dashboardItem}>
+            <View style={[styles.iconDot, { backgroundColor: '#D40073' }]} />
+            <ThemedText style={{ flex: 1 }}>Nequi</ThemedText>
+            <ThemedText type="defaultSemiBold">$120,450</ThemedText>
+          </ThemedView>
+          <ThemedView style={styles.dashboardItem}>
+            <View style={[styles.iconDot, { backgroundColor: '#820AD1' }]} />
+            <ThemedText style={{ flex: 1 }}>Nu Colombia</ThemedText>
+            <ThemedText type="defaultSemiBold">$2,800,000</ThemedText>
+          </ThemedView>
+          <View style={styles.totalDivider} />
+          <ThemedView style={styles.dashboardItem}>
+            <ThemedText type="defaultSemiBold" style={{ flex: 1 }}>Total Centralizado</ThemedText>
+            <ThemedText type="title" style={{ fontSize: 22 }}>$6,370,650</ThemedText>
+          </ThemedView>
+        </ThemedView>
       </ThemedView>
+
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
+        <ThemedText type="subtitle">Vincular Nueva Entidad</ThemedText>
+        <Link href="/vincula-entidad" asChild>
+          <TouchableOpacity style={styles.button}>
+            <Ionicons name="add-circle-outline" size={24} color="#fff" />
+            <ThemedText style={{ color: '#fff', fontWeight: 'bold' }}>Añadir Banco o Neobanco</ThemedText>
+          </TouchableOpacity>
+        </Link>
         <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
+          Continúa expandiendo tu red financiera. Soporte para Bancolombia, Nequi, Davivienda, Nu y más.
         </ThemedText>
       </ThemedView>
     </ParallaxScrollView>
@@ -94,5 +98,37 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: 'absolute',
+  },
+  button: {
+    backgroundColor: '#0a7ea4',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    alignSelf: 'flex-start',
+  },
+  dashboardCard: {
+    borderRadius: 16,
+    padding: 16,
+    gap: 12,
+    backgroundColor: 'rgba(0,0,0,0.03)',
+  },
+  dashboardItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    gap: 10,
+  },
+  iconDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
+  totalDivider: {
+    height: 1,
+    backgroundColor: 'rgba(0,0,0,0.1)',
+    marginVertical: 4,
   },
 });
