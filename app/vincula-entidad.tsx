@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, FlatList, TextInput, TouchableOpacity, View, ActivityIndicator, Alert } from 'react-native';
+import { StyleSheet, FlatList, TextInput, TouchableOpacity, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -26,7 +26,6 @@ const BANKS = [
 
 export default function RegisterEntityScreen() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [loading, setLoading] = useState<string | null>(null);
   const router = useRouter();
 
   const textColor = useThemeColor({}, 'text');
@@ -38,27 +37,15 @@ export default function RegisterEntityScreen() {
   );
 
   const handleSelectBank = (bank: typeof BANKS[0]) => {
-    setLoading(bank.id);
-    
-    // Simulate connection flow
-    setTimeout(() => {
-      setLoading(null);
-      Alert.alert(
-        'Vincular Cuenta',
-        `Esto te redirigirá a ${bank.name} para autenticarte de forma segura.`,
-        [
-          { text: 'Cancelar', style: 'cancel' },
-          { 
-            text: 'Continuar', 
-            onPress: () => {
-              // Simulate success
-              Alert.alert('¡Listos!', `Tu cuenta de ${bank.name} ha sido vinculada y la información se está sincronizando.`);
-              router.back();
-            } 
-          },
-        ]
-      );
-    }, 1200);
+    router.push({
+      pathname: '/login-banco' as any,
+      params: { 
+        id: bank.id,
+        name: bank.name,
+        color: bank.color,
+        textColor: bank.textColor
+      }
+    });
   };
 
   const renderBankItem = ({ item }: { item: typeof BANKS[0] }) => (
@@ -66,7 +53,6 @@ export default function RegisterEntityScreen() {
       style={[styles.bankItem, { backgroundColor: cardBg }]}
       onPress={() => handleSelectBank(item)}
       activeOpacity={0.7}
-      disabled={!!loading}
     >
       <View style={[styles.logoContainer, { backgroundColor: item.color }]}>
         <ThemedText style={[styles.logoText, { color: item.textColor }]}>
@@ -79,11 +65,7 @@ export default function RegisterEntityScreen() {
         </ThemedText>
         <ThemedText style={styles.categoryText}>{item.category}</ThemedText>
       </View>
-      {loading === item.id ? (
-        <ActivityIndicator color={textColor} />
-      ) : (
-        <Ionicons name="chevron-forward" size={18} color="#999" />
-      )}
+      <Ionicons name="chevron-forward" size={18} color="#999" />
     </TouchableOpacity>
   );
 
