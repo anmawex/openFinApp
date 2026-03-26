@@ -1,8 +1,9 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Dimensions } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Dimensions, Alert } from 'react-native';
 import { useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as LocalAuthentication from 'expo-local-authentication';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -11,6 +12,38 @@ const { height } = Dimensions.get('window');
 
 export default function OnboardingScreen() {
   const router = useRouter();
+
+  const handleAuthenticate = async () => {
+    try {
+      // Check if device has biometric hardware
+      const hasHardware = await LocalAuthentication.hasHardwareAsync();
+      const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+
+      if (hasHardware && isEnrolled) {
+        const result = await LocalAuthentication.authenticateAsync({
+          promptMessage: 'Desbloquea para ver tus finanzas',
+          fallbackLabel: 'Usar PIN del dispositivo',
+          cancelLabel: 'Cancelar',
+        });
+
+        if (result.success) {
+          router.replace('/(tabs)');
+        } else if (result.error !== 'user_cancel') {
+          Alert.alert('Autenticación fallida', 'Por favor, intenta nuevamente para proteger tus datos.');
+        }
+      } else {
+        // Fallback for simulators or devices without biometrics configured
+        Alert.alert(
+          'Protección Recomendada',
+          'Tu dispositivo no tiene FaceID o Huella dactilar configurada. Te recomendamos activarlo para mantener tus datos seguros.',
+          [{ text: 'Entendido y Continuar', onPress: () => router.replace('/(tabs)') }]
+        );
+      }
+    } catch (error) {
+      console.warn(error);
+      router.replace('/(tabs)'); // Fallback in case of unexpected error
+    }
+  };
 
   return (
     <ThemedView style={styles.container}>
@@ -71,7 +104,7 @@ export default function OnboardingScreen() {
           <TouchableOpacity 
             style={styles.button} 
             activeOpacity={0.8}
-            onPress={() => router.replace('/(tabs)')}
+            onPress={handleAuthenticate}
           >
             <ThemedText style={styles.buttonText}>Comenzar ahora</ThemedText>
             <Ionicons name="arrow-forward" size={20} color="#fff" />
